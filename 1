@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: auto;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px 0;
+        }
+
+        .tracker {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .tracker-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tracker-item span {
+            font-size: 18px;
+            flex: 1;
+            text-align: left;
+        }
+
+        .arrow {
+            font-size: 24px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            outline: none;
+        }
+
+        .arrow.up {
+            color: green;
+        }
+
+        .arrow.down {
+            color: red;
+        }
+
+        input[type="number"] {
+            width: 50px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="tracker">
+        <div class="tracker-item">
+            <span>Buyside Appts Complete</span>
+            <div class="controls">
+                <button class="arrow up" onclick="increment('buysideAppts')">▲</button>
+                <input type="number" id="buysideAppts" value="0" min="0" oninput="saveData()">
+                <button class="arrow down" onclick="decrement('buysideAppts')">▼</button>
+            </div>
+        </div>
+
+        <div class="tracker-item">
+            <span>Sellside Appts Complete</span>
+            <div class="controls">
+                <button class="arrow up" onclick="increment('sellsideAppts')">▲</button>
+                <input type="number" id="sellsideAppts" value="0" min="0" oninput="saveData()">
+                <button class="arrow down" onclick="decrement('sellsideAppts')">▼</button>
+            </div>
+        </div>
+
+        <div class="tracker-item">
+            <span>New Listing</span>
+            <div class="controls">
+                <button class="arrow up" onclick="increment('newListing')">▲</button>
+                <input type="number" id="newListing" value="0" min="0" oninput="saveData()">
+                <button class="arrow down" onclick="decrement('newListing')">▼</button>
+            </div>
+        </div>
+
+        <div class="tracker-item">
+            <span>New Buyer/ Tenant Rep</span>
+            <div class="controls">
+                <button class="arrow up" onclick="increment('newBuyerTenantRep')">▲</button>
+                <input type="number" id="newBuyerTenantRep" value="0" min="0" oninput="saveData()">
+                <button class="arrow down" onclick="decrement('newBuyerTenantRep')">▼</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function saveData() {
+            const data = {
+                buysideAppts: document.getElementById('buysideAppts').value,
+                sellsideAppts: document.getElementById('sellsideAppts').value,
+                newListing: document.getElementById('newListing').value,
+                newBuyerTenantRep: document.getElementById('newBuyerTenantRep').value
+            };
+            localStorage.setItem('trackerData', JSON.stringify(data));
+        }
+
+        function loadData() {
+            const savedData = JSON.parse(localStorage.getItem('trackerData')) || {};
+            document.getElementById('buysideAppts').value = savedData.buysideAppts || 0;
+            document.getElementById('sellsideAppts').value = savedData.sellsideAppts || 0;
+            document.getElementById('newListing').value = savedData.newListing || 0;
+            document.getElementById('newBuyerTenantRep').value = savedData.newBuyerTenantRep || 0;
+        }
+
+        function increment(id) {
+            const element = document.getElementById(id);
+            element.value = parseInt(element.value) + 1;
+            saveData();
+        }
+
+        function decrement(id) {
+            const element = document.getElementById(id);
+            if (parseInt(element.value) > 0) {
+                element.value = parseInt(element.value) - 1;
+                saveData();
+            }
+        }
+
+        window.onload = loadData;
+    </script>
+
+</body>
+</html>
