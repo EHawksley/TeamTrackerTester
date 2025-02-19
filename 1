@@ -28,6 +28,26 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
         .tracker-item {
             display: flex;
             justify-content: space-between;
@@ -67,25 +87,17 @@
             text-align: center;
             font-size: 16px;
         }
-
-        button {
-            padding: 12px;
-            font-size: 16px;
-            cursor: pointer;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 5px;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
     </style>
 </head>
 <body>
 
     <div class="tracker">
+        <div class="button-container">
+            <button onclick="window.open('https://docs.google.com/spreadsheets/d/e/2PACX-1vRjVGNrhTe1rBZSwSJlG-rrM0FDTtwSZ6Ra89hsRFW8V-CjPHQtLafUBByQYFlO9z6z_POQHS7VrJ-f/pubhtml', '_blank')">Go to Dashboard</button>
+        </div>
+
+        <button class="reset-button" onclick="resetData()">Zero Everything Out</button>
+
         <div class="tracker-item">
             <span>Buyside Appts Complete</span>
             <div class="controls">
@@ -121,6 +133,17 @@
                 <button class="arrow down" onclick="decrement('newBuyerTenantRep')">▼</button>
             </div>
         </div>
+
+        <div class="tracker-item">
+            <span>Commission Earned</span>
+            <input type="text" id="commissionEarned" placeholder="Enter Amount" onblur="formatCurrency(this)" oninput="saveData()">
+        </div>
+
+        <div class="submit-container">
+            <button onclick="submitData()">Submit</button>
+        </div>
+
+        <div id="statusMessage"></div>
     </div>
 
     <script>
@@ -129,7 +152,8 @@
                 buysideAppts: document.getElementById('buysideAppts').value,
                 sellsideAppts: document.getElementById('sellsideAppts').value,
                 newListing: document.getElementById('newListing').value,
-                newBuyerTenantRep: document.getElementById('newBuyerTenantRep').value
+                newBuyerTenantRep: document.getElementById('newBuyerTenantRep').value,
+                commissionEarned: document.getElementById('commissionEarned').value
             };
             localStorage.setItem('trackerData', JSON.stringify(data));
         }
@@ -140,6 +164,7 @@
             document.getElementById('sellsideAppts').value = savedData.sellsideAppts || 0;
             document.getElementById('newListing').value = savedData.newListing || 0;
             document.getElementById('newBuyerTenantRep').value = savedData.newBuyerTenantRep || 0;
+            document.getElementById('commissionEarned').value = savedData.commissionEarned || '';
         }
 
         function increment(id) {
@@ -154,6 +179,28 @@
                 element.value = parseInt(element.value) - 1;
                 saveData();
             }
+        }
+
+        function resetData() {
+            if (confirm("Are you sure you want to reset all data? This action cannot be undone.")) {
+                document.getElementById('buysideAppts').value = 0;
+                document.getElementById('sellsideAppts').value = 0;
+                document.getElementById('newListing').value = 0;
+                document.getElementById('newBuyerTenantRep').value = 0;
+                document.getElementById('commissionEarned').value = '';
+                localStorage.removeItem('trackerData');
+            }
+        }
+
+        function formatCurrency(input) {
+            let value = input.value.replace(/[^0-9.]/g, '');
+            if (value) {
+                const numberValue = parseFloat(value);
+                input.value = '$' + numberValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            } else {
+                input.value = '';
+            }
+            saveData();
         }
 
         window.onload = loadData;
